@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tambah Buku</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/static/custom.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: #2d1c5c;">
+        <div class="container-fluid">
+            <div>
+                <img src="/static/logo.png" width="100" height="100">
+                <a class="navbar-brand text-light" href="/">ARC</a>
+            </div>
+            <div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"><img src="/static/icon.jpg" width="30" height="30"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active text-light" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Pusat Akun
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/logout" role="button">Logout</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/syarat">Syarat & Ketentuan</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h3 class="mt-4 text-center">Tambahkan Daftar Buku</h3>
+    <div class="container card shadow p-4">
+        <form id="addBookForm">
+            <div class="mb-3">
+                <label for="judul" class="form-label">Judul:</label>
+                <input type="text" class="form-control" id="judul" name="judul" required>
+
+                <label for="foto" class="form-label">Foto Buku:</label>
+                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+
+                <label for="penerbit" class="form-label mt-3">Penerbit:</label>
+                <input type="text" class="form-control" id="penerbit" name="penerbit">
+
+                <label for="bahasa" class="form-label mt-3">Bahasa:</label>
+                <input type="text" class="form-control" id="bahasa" name="bahasa" required>
+
+                <label for="kategori" class="form-label mt-3">Kategori:</label>
+                <select class="form-select" id="kategori" name="kategori" required>
+                    <option value="">--Pilih Kategori--</option>
+                    <option value="Ensiklopedia">Ensiklopedia</option>
+                    <option value="Komik">Komik</option>
+                    <option value="Novel">Novel</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+
+                <label for="genre" class="form-label mt-3">Genre:</label>
+                <select class="form-select" id="genre" name="genre" required>
+                    <option value="">--Pilih Genre--</option>
+                    <option value="Pengetahuan Umum">Pengetahuan Umum</option>
+                    <option value="Sci-fi">Sci-fi</option>
+                    <option value="Petualangan">Petualangan</option>
+                    <option value="Sejarah">Sejarah</option>
+                    <option value="Horror">Horror</option>
+                </select>
+
+                <label for="deskripsi" class="form-label mt-3">Deskripsi:</label>
+                <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"></textarea>
+            </div>
+
+            <center class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn btn-success mx-2">Tambahkan Buku</button>
+                <a class="btn btn-danger mx-2" href="/dashboard">Kembali</a>
+            </center>
+        </form>
+    </div>
+
+    <div class="container mt-4" id="messageContainer"></div>
+
+    {%include 'footer.html' %}
+
+    <script>
+        const fotoInput = document.getElementById('foto');
+        let namaFoto = "";
+
+        fotoInput.addEventListener('change', function () {
+            if (this.files && this.files.length > 0) {
+                namaFoto = this.files.item(0).name;
+                console.log("Nama file yang dipilih:", namaFoto);
+            }
+        });
+
+        document.getElementById('addBookForm').addEventListener('submit', function (event) {
+            event.preventDefault();            
+
+            const data = {
+                judul: document.getElementById('judul').value,
+                foto: namaFoto,
+                penerbit: document.getElementById('penerbit').value,
+                bahasa: document.getElementById('bahasa').value,
+                kategori: document.getElementById('kategori').value,
+                genre: document.getElementById('genre').value,
+                deskripsi: document.getElementById('deskripsi').value
+            };
+
+            fetch('/add_book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('messageContainer').innerHTML = `
+                    <div class="alert alert-success">${result.message}</div>
+                `;
+                document.getElementById('addBookForm').reset();
+            })
+            .catch(error => {
+                document.getElementById('messageContainer').innerHTML = `
+                    <div class="alert alert-danger">Terjadi kesalahan saat menambahkan buku.</div>
+                `;
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

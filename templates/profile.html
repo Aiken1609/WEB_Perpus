@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+
+    <div class="container">
+
+        <div class="profile-card">
+            <div class="profile-image">
+                <img src="{{ user.foto or url_for('static', filename='default_profile.jpg') }}" alt="Foto Profil">
+            </div>
+            <div class="profile-info">
+                <h2>{{ user.username }}</h2>
+                <p class="user-role">Role: {{ user.role }}</p>
+
+                <div class="profile-actions">
+                    <a href="/edit_profile" class="btn">Edit Profil</a>
+                    <a href="/logout" class="btn btn-logout">Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-books">
+            <h3>Riwayat Bacaan</h3>
+            <div class="book-grid">
+                {% for book in user_books %}
+                    <div class="book-card">
+                        <img src="{{ book.cover_url or url_for('static', filename='default_cover.jpg') }}" alt="Cover Buku" class="book-cover">
+                        <h4>{{ book.judul }}</h4>
+                        <p class="genre">{{ book.genre }}</p>
+                        <p class="status">Status: {{ book.status_baca or 'Belum dibaca' }}</p>
+                        <p class="rating">⭐ {{ book.rating or 'N/A' }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
