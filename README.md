@@ -1,2 +1,2 @@
 # Tugas4_WEB
-Anggota kelompok: -Wahyu Widiasmoro \ 124220126 -Aiken Ahmaf Hakeem \ 124220128
+Anggota kelompok: \nWahyu Widiasmoro \ 124220126 \nAiken Ahmaf Hakeem \ 124220128
