@@ -70,12 +70,11 @@ def buku():
 def home():
     return render_template('index.html')
 
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def loginle():
+@app.route('/masuk')
+def masuk():
     return render_template('login.html')
 
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -214,6 +213,7 @@ def get_books():
     
     return jsonify(book_list)
 
+#Pencarian Buku berdasarkan judul
 @app.route('/books/search', methods=['GET'])
 def search_books():
     keyword = request.args.get('judul', '')
@@ -223,6 +223,7 @@ def search_books():
         "judul": book.judul
     } for book in books])
 
+#Filter Buku berdasarkan kategori, genre, dan penerbit
 @app.route('/books/filter', methods=['GET'])
 def filter_books():
     kategori = request.args.get('kategori')
