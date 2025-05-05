@@ -19,8 +19,6 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # Inisialisasi database 
 db.init_app(app)
 
-# --- Middleware: login_required decorator
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -83,6 +81,36 @@ def edit_book(id_buku):
     book = Buku.query.get_or_404(id_buku)
     return render_template('edit_book.html', book=book)
 
+@app.route('/profile')
+@login_required
+def profile():
+    id_user = session.get('id_user')
+
+    user = User.query.filter_by(id_user=id_user).first()
+
+    # Ambil semua review dari user ini
+    user_reviews = Review.query.filter_by(id_user=id_user).all()
+
+    # Ambil info buku dari tiap review
+    reviewed_books = []
+    for review in user_reviews:
+        buku = Buku.query.get(review.id_buku)
+        if buku:
+            reviewed_books.append({
+                'id_buku': buku.id_buku,
+                'judul': buku.judul,
+                'penerbit': buku.penerbit,
+                'bahasa': buku.bahasa,
+                'kategori': buku.kategori,
+                'genre': buku.genre,
+                'foto': buku.foto,
+                'rating': review.rating
+            })
+
+    return render_template('profile.html', user=user, reviewed_books=reviewed_books)
+
+# ========== BACKEND API (JSON) ==========
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -134,8 +162,6 @@ def daftar():
     
     return render_template('daftar.html')
 
-# ========== BACKEND API (JSON) ==========
-
 from flask import session, jsonify, request
 
 @app.route('/rating', methods=['POST'])
@@ -173,35 +199,6 @@ def submit_rating():
         "jumlah_user": jumlah_user
     })
 
-@app.route('/profile')
-@login_required
-def profile():
-    id_user = session.get('id_user')
-
-    user = User.query.filter_by(id_user=id_user).first()
-
-    # Ambil semua review dari user ini
-    user_reviews = Review.query.filter_by(id_user=id_user).all()
-
-    # Ambil info buku dari tiap review
-    reviewed_books = []
-    for review in user_reviews:
-        buku = Buku.query.get(review.id_buku)
-        if buku:
-            reviewed_books.append({
-                'id_buku': buku.id_buku,
-                'judul': buku.judul,
-                'penerbit': buku.penerbit,
-                'bahasa': buku.bahasa,
-                'kategori': buku.kategori,
-                'genre': buku.genre,
-                'foto': buku.foto,
-                'rating': review.rating
-            })
-
-    return render_template('profile.html', user=user, reviewed_books=reviewed_books)
-
-
 @app.route('/api/book/<int:id_buku>', methods=['GET'])
 def get_book_detail(id_buku):
     book = Buku.query.get(id_buku)
@@ -219,21 +216,6 @@ def get_book_detail(id_buku):
         })
     else:
         return jsonify({'error': 'Buku tidak ditemukan'}), 404
-
-@app.route('/upload', methods=['POST'])
-@login_required
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({"message": "No file part"}), 400
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"message": "No selected file"}), 400
-
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(filepath)
-    return jsonify({"filename": filename, "url": f"/uploads/{filename}"})
 
 @app.route('/add_book', methods=['POST'])
 def add_book():
@@ -291,7 +273,6 @@ def filter_books():
     return jsonify([{ "id_buku": b.id_buku, "judul": b.judul } for b in books])
 
 @app.route('/edit_profile', methods=['PUT'])
-@login_required
 def edit_profile():
     user = User.query.get(session['id_user'])
 
@@ -316,7 +297,6 @@ def edit_profile():
 
 
 @app.route('/detail/<int:id_buku>', methods=['GET'])
-@login_required
 def detail(id_buku):
     buku = Buku.query.get_or_404(id_buku)
 
@@ -335,7 +315,6 @@ def detail(id_buku):
     )
 
 @app.route('/update/<int:id_buku>', methods=['PUT'])
-@login_required
 def update_book(id_buku):
     data = request.get_json()
     book = Buku.query.get_or_404(id_buku)
@@ -350,12 +329,18 @@ def update_book(id_buku):
     return jsonify({"message": "Buku berhasil diupdate!"})
 
 @app.route('/delete_book/<int:id_buku>', methods=['DELETE'])
-@login_required
 def delete_book(id_buku):
     book = Buku.query.get_or_404(id_buku)
     db.session.delete(book)
     db.session.commit()
     return jsonify({"message": "Buku berhasil dihapus!"})
+
+@app.route('/delete_user/<int:id_user>', methods=['DELETE'])
+def delete_user(id_user):
+    user = User.query.get_or_404(id_user)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User berhasil dihapus!"})
 
 if __name__ == '__main__':
     app.run(debug=True)
