@@ -1,48 +1,142 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/static/custom.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 </head>
 <body>
 
     {% include 'navbar.html' %}
 
-    <div class="container">
+    <div class="container my-5">
 
         <div class="profile-card">
             <div class="profile-image">
-                <img src="{{ user.foto or url_for('static', filename='default_profile.jpg') }}" alt="Foto Profil">
+                <img src="/uploads/{{ user.foto or url_for('static', filename='default_profile.jpg') }}" alt="/uploads/default_profile.jpg">
             </div>
             <div class="profile-info">
                 <h2>{{ user.username }}</h2>
                 <p class="user-role">Role: {{ user.role }}</p>
 
                 <div class="profile-actions">
-                    <a href="/edit_profile" class="btn">Edit Profil</a>
-                    <a href="/logout" class="btn btn-logout">Logout</a>
+                    <button class="btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profil</button>
+                    <a href="/logout" class="btn btn-logout">Logout <svg xmlns="http://www.w3.org/2000/svg"
+                        height="1em" viewBox="0 0 512 512">
+                        <style>
+                          svg {
+                            fill: #ffffff;
+                          }
+                        </style>
+                        <path
+                          d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32z" />
+                      </svg></a>
                 </div>
             </div>
         </div>
 
-        <div class="user-books">
-            <h3>Riwayat Bacaan</h3>
+        <div class="user-books mt-5">
+            <h3>Riwayat Review</h3>
             <div class="book-grid">
-                {% for book in user_books %}
-                    <div class="book-card">
-                        <img src="{{ book.cover_url or url_for('static', filename='default_cover.jpg') }}" alt="Cover Buku" class="book-cover">
-                        <h4>{{ book.judul }}</h4>
-                        <p class="genre">{{ book.genre }}</p>
-                        <p class="status">Status: {{ book.status_baca or 'Belum dibaca' }}</p>
-                        <p class="rating">⭐ {{ book.rating or 'N/A' }}</p>
+                {% if reviewed_books %}
+                    {% for book in reviewed_books %}
+                        <a href="/detail/{{ book.id_buku }}" style="text-decoration: none; color: inherit;">
+                            <div class="card mb-3 shadow-sm p-3">
+                                <div class="row">
+                                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                        <h5 class="fw-bold">{{ loop.index }}</h5>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <img src="/uploads/{{ book.foto }}" alt="{{ book.judul }}"
+                                            style="max-height: 200px; width: auto; display: block; margin: 0 auto; border-radius: 10px;">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <h4 class="fw-bold">{{ book.judul }}</h4>
+                                        <p class="mb-1"><small>Penerbit: {{ book.penerbit }}</small></p>
+                                        <p class="mb-1"><small>Bahasa: {{ book.bahasa }}</small></p>
+                                        <p class="mb-1"><small>Genre: {{ book.genre }}</small></p>
+                                        <p class="mb-1"><small>Kategori: {{ book.kategori }}</small></p>
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-center justify-content-center">
+                                        <h5 style="color: gold;">⭐ {{ book.rating }}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="card p-3 text-center">
+                        <h5>Kamu belum memberikan review buku apapun, mulai mereview!</h5>
                     </div>
-                {% endfor %}
+                {% endif %}
             </div>
         </div>
 
     </div>
+    
+    {% include 'footer.html' %}
 
+    <!-- Modal Edit Profil -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="editProfileForm" class="modal-content" enctype="multipart/form-data" action="/edit_profile" method="PUT">
+            <div class="modal-header">
+            <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password (opsional)</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+                <div class="mb-3">
+                    <label for="foto" class="form-label">Foto Profil</label>
+                    <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    
+
+    <script>
+        document.getElementById('editProfileForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+    
+            try {
+                const response = await fetch('/edit_profile', {
+                    method: 'PUT',
+                    body: formData
+                });
+    
+                const result = await response.json();
+    
+                if (response.ok) {
+                    alert(result.message || 'Profil berhasil diperbarui');
+                    location.reload();
+                } else {
+                    alert(result.error || 'Gagal memperbarui profil');
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan: ' + error.message);
+            }
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>    
 </body>
 </html>

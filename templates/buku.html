@@ -50,9 +50,7 @@
                                 <p class="card-text">Kategori: ${buku.kategori}</p>
                                 <p class="card-text">Genre: ${buku.genre}</p>
                                 <p class="card-text">Rating: ${buku.rating}</p>
-                                <form action="/api/book/${buku.id_buku}" method="get">
-                                    <button type="submit" class="btn btn-primary">Detail</button>
-                                </form>
+                                <a href="/detail/${buku.id_buku}" class="btn btn-primary">Detail</a>
                             </div>
                         </div>
                     `;
