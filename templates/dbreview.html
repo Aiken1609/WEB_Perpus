@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Dashboard Admin</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" type="text/css" href="/static/custom.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"
+        ></script>
+    </head>
+
+    <body class="d-flex flex-column min-vh-100">
+        {% include 'navbar.html' %}
+
+        <div class="container mt-5">
+            <form id="search-form" class="d-flex justify-content-center mb-3" autocomplete="off">
+                <input class="form-control w-50 me-2" type="search" placeholder="Cari judul buku..." id="search-input" name="q" />
+                <input class="form-control w-25 me-2" type="search" placeholder="Cari username..." id="username-input" name="username" />
+                <button class="btn btn-outline-secondary" type="submit" id="search-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85z"/>
+                        <path d="M12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <div class="row my-4 mx-4 p-1">
+            <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                <p class="my-auto" style="text-align: center; font-size: 20px">
+                    <b id="table-title">Daftar Review:</b>
+                </p>
+            </div>
+
+            <div class="card bg-body-tertiary rounded shadow mx-auto p-3 my-auto">
+                <table class="table table-striped table-bordered text-center" id="reviews-table">
+                    <thead id="table-head">
+                        <tr>
+                            <th>ID Review</th>
+                            <th>Buku</th>
+                            <th>User</th>
+                            <th>Rating</th>
+                            <th>Date created</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewsContainer"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container mb-4">
+            <div class="d-flex flex-column align-items-center">
+                <nav><ul class="pagination" id="pagination-nav"></ul></nav>
+                <div id="pagination-info" class="text-muted mt-2" style="font-size: 14px"></div>
+            </div>
+        </div>
+
+        {% include 'footer.html' %}
+
+        <script>
+            let allReviews = [];
+            let currentPage = 1;
+            const reviewsPerPage = 9;
+            let searchMode = false;
+            let searchResults = [];
+            let searchPage = 1;
+            const searchPerPage = 9;
+
+            document.addEventListener("DOMContentLoaded", function () {
+                loadReviews();
+
+                document.getElementById("search-form").addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const q = document.getElementById("search-input").value.trim();
+                    const username = document.getElementById("username-input").value.trim();
+                    if (q === "" && username === "") {
+                        // Kembali ke daftar review
+                        searchMode = false;
+                        document.getElementById("table-title").textContent = "Daftar Review:";
+                        document.getElementById("table-head").innerHTML = `
+                            <tr>
+                                <th>ID Review</th>
+                                <th>Buku</th>
+                                <th>User</th>
+                                <th>Rating</th>
+                                <th>Date created</th>
+                            </tr>
+                        `;
+                        renderPaginatedReviews();
+                        return;
+                    }
+                    searchMode = true;
+                    searchPage = 1;
+                    let url = `/api/search_review?q=${encodeURIComponent(q)}&username=${encodeURIComponent(username)}`;
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(data => {
+                            searchResults = data;
+                            document.getElementById("table-title").textContent = "Hasil Pencarian Review:";
+                            document.getElementById("table-head").innerHTML = `
+                                <tr>
+                                    <th>ID Review</th>
+                                    <th>Buku</th>
+                                    <th>User</th>
+                                    <th>Rating</th>
+                                    <th>Date created</th>
+                                </tr>
+                            `;
+                            renderPaginatedSearch();
+                        })
+                        .catch(err => {
+                            searchResults = [];
+                            renderPaginatedSearch();
+                        });
+                });
+            });
+
+            function loadReviews() {
+                fetch("/api/reviews_full")
+                    .then((res) => res.json())
+                    .then((data) => {
+                        allReviews = data;
+                        currentPage = 1;
+                        if (!searchMode) renderPaginatedReviews();
+                    })
+                    .catch((err) => console.error("Gagal load review:", err));
+            }
+
+            function renderReviews(data) {
+                const container = document.getElementById("reviewsContainer");
+                container.innerHTML = "";
+
+                data.forEach((item) => {
+                    // item bisa dari /api/reviews_full (lama) atau /api/search_review (baru)
+                    // Deteksi struktur data
+                    let review, buku, user;
+                    if (item.review && item.buku && item.user) {
+                        // Struktur dari /api/search_review
+                        review = item.review;
+                        buku = item.buku;
+                        user = item.user;
+                    } else {
+                        // Struktur dari /api/reviews_full
+                        review = item;
+                        buku = item.buku;
+                        user = item.user;
+                    }
+                    const reviewRow = document.createElement("tr");
+                    reviewRow.classList.add("tabel-hover");
+                    reviewRow.innerHTML = `
+                        <td style="cursor: pointer" class="align-middle text-center">${review.id_review}</td>
+                        <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer" class="align-middle text-center">
+                            ${buku && buku.foto ? `<img src="/uploads/${buku.foto}" style="width: 120px; height: 150px; object-fit: cover;" alt="Buku">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
+                            <div style="margin-top:8px; font-size:14px; font-weight:500;">
+                                ${buku && buku.judul ? buku.judul : "Tidak ditemukan"}
+                            </div>
+                        </td>
+                        <td class="align-middle text-center">
+                            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                <div class="mb-1" style="width:70px;height:70px;background:#e0e0e0;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                                    ${user && user.foto ? `<img src="/uploads/${user.foto}" alt="user" style="width:100%;height:100%;object-fit:cover;">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
+                                </div>
+                                <div><span>${user && user.username ? user.username : "Tidak ditemukan"}</span></div>
+                            </div>
+                        </td>
+                        <td class="align-middle text-center">${review.rating || ""}</td>
+                        <td class="align-middle text-center">${review.created_at || ""}</td>
+                    `;
+                    // Klik ke detail buku jika ada id_buku
+                    if (buku && buku.id_buku) {
+                        reviewRow.querySelectorAll("td").forEach(td => {
+                            td.style.cursor = "pointer";
+                            td.onclick = () => window.location = `/detail/${buku.id_buku}`;
+                        });
+                    }
+                    container.appendChild(reviewRow);
+                });
+            }
+
+            function renderPaginatedReviews() {
+                const reviews = allReviews;
+                const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+                const startIdx = (currentPage - 1) * reviewsPerPage;
+                const endIdx = Math.min(startIdx + reviewsPerPage, reviews.length);
+                renderReviews(reviews.slice(startIdx, endIdx));
+                renderPaginationNav(totalPages, false);
+                document.getElementById("pagination-info").textContent =
+                    reviews.length === 0
+                        ? "Tidak ada data review."
+                        : `Menampilkan ${startIdx + 1}-${endIdx} dari ${reviews.length} review | Halaman ${currentPage}/${totalPages}`;
+            }
+
+            function renderPaginatedSearch() {
+                const totalPages = Math.ceil(searchResults.length / searchPerPage);
+                const startIdx = (searchPage - 1) * searchPerPage;
+                const endIdx = Math.min(startIdx + searchPerPage, searchResults.length);
+                renderReviews(searchResults.slice(startIdx, endIdx));
+                renderPaginationNav(totalPages, true);
+                document.getElementById("pagination-info").textContent =
+                    searchResults.length === 0
+                        ? "Tidak ada hasil pencarian."
+                        : `Menampilkan ${startIdx + 1}-${endIdx} dari ${searchResults.length} review | Halaman ${searchPage}/${totalPages}`;
+            }
+
+            function renderPaginationNav(totalPages, isSearch) {
+                const nav = document.getElementById("pagination-nav");
+                nav.innerHTML = "";
+
+                const page = isSearch ? searchPage : currentPage;
+                const setPage = (p) => {
+                    if (isSearch) {
+                        searchPage = p;
+                        renderPaginatedSearch();
+                    } else {
+                        currentPage = p;
+                        renderPaginatedReviews();
+                    }
+                };
+
+                const createPageItem = (label, p, disabled = false, active = false) => {
+                    const li = document.createElement("li");
+                    li.className = `page-item${disabled ? " disabled" : ""}${active ? " active" : ""}`;
+                    li.innerHTML = `<a class="page-link" href="#">${label}</a>`;
+                    if (!disabled && !active) {
+                        li.addEventListener("click", (e) => {
+                            e.preventDefault();
+                            setPage(p);
+                        });
+                    }
+                    return li;
+                };
+
+                nav.appendChild(createPageItem("«", page - 1, page === 1));
+                for (let i = 1; i <= totalPages; i++) {
+                    nav.appendChild(createPageItem(i, i, false, i === page));
+                }
+                nav.appendChild(createPageItem("»", page + 1, page === totalPages || totalPages === 0));
+            }
+        </script>
+    </body>
+</html>

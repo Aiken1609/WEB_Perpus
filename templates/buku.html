@@ -1,74 +1,400 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Halaman User</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/static/custom.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-</head>
-
-<body>
-    {% include 'navbar.html' %}
-    <div id="progress-bar">
-        <div id="progress-bar-fill"></div>
-    </div>
-    <p class="mt-5" style="text-align: center; font-size:20px"><b>Daftar Buku</b></p>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="/static/custom.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
     
-    <!-- Kontainer untuk buku -->
-    <div class="container">
-        <div class="row" id="book-container">
-            <!-- Buku akan ditampilkan di sini melalui JavaScript -->
-        </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body class="bg_default">
+    {% include 'navbar.html' %}
+
+    <!-- Search bar -->
+    <div class="container mt-5">
+      <form
+        id="search-form"
+        class="d-flex justify-content-center mb-3"
+        autocomplete="off"
+      >
+        <input
+          class="form-control w-50 me-2"
+          type="search"
+          placeholder="Cari buku..."
+          aria-label="Search"
+          id="search-input"
+          name="q"
+        />
+        <button class="btn btn-outline-secondary" type="submit" id="search-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-search"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+            />
+          </svg>
+        </button>
+      </form>
     </div>
-    <br>
+
+    <!-- Container untuk rekomendasi buku -->
+    <div class="container mt-3" id="recommendation-section">
+      <h5 class="text-center"><b>Rekomendasi untuk Kamu</b></h5>
+      <div class="row" id="recommendation-container">
+        <!-- Rekomendasi buku akan ditampilkan di sini -->
+      </div>
+    </div>
+
+
+    <p class="mt-2" style="text-align: center; font-size: 20px">
+      <b>Daftar Buku</b>
+    </p>
+
+    <!-- Kontainer untuk buku -->
+    <div class="container mt-5" id="book-wrapper">
+      <div class="row" id="book-container">
+        <!-- Buku akan ditampilkan di sini melalui JavaScript -->
+      </div>
+      <!-- PAGINATION NAVIGATION & INFO -->
+      <div class="container mb-4" id="pagination-wrapper">
+        <div class="d-flex flex-column align-items-center">
+          <nav>
+            <ul class="pagination" id="pagination-nav">
+              <!-- Pagination buttons will be rendered here -->
+            </ul>
+          </nav>
+          <div
+            id="pagination-info"
+            class="text-muted mt-2"
+            style="font-size: 14px"
+          >
+            <!-- Page info will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% include 'footer.html' %}
 
-    <!-- Script untuk mengambil data buku melalui API dan menampilkannya -->
     <script>
-        // Fungsi untuk mengambil data buku dari API
-        async function getBooks() {
-            try {
-                const response = await fetch('/api/books');
-                const books = await response.json();
+      const booksPerPage = 6;
+      let currentPage = 1;
+      let allBooks = [];
+      let isSearch = false; // Untuk membedakan mode search
 
-                const bookContainer = document.getElementById('book-container');
-
-                // Iterasi melalui buku dan buat elemen untuk setiap buku
-                books.forEach(buku => {
-                    const bookCard = document.createElement('div');
-                    bookCard.classList.add('col-12', 'col-md-6', 'col-lg-4');
-                    bookCard.innerHTML = `
-                        <div class="card mb-3">
-                            <img src="/uploads/${buku.foto}" class="card-img-top" alt="${buku.judul}">
-                            <div class="card-body">
-                                <h5 class="card-title">${buku.judul}</h5>
-                                <p class="card-text">Penerbit: ${buku.penerbit}</p>
-                                <p class="card-text">Bahasa: ${buku.bahasa}</p>
-                                <p class="card-text">Kategori: ${buku.kategori}</p>
-                                <p class="card-text">Genre: ${buku.genre}</p>
-                                <p class="card-text">Rating: ${buku.rating}</p>
-                                <a href="/detail/${buku.id_buku}" class="btn btn-primary">Detail</a>
-                            </div>
+      function showSkeleton(count = booksPerPage) {
+        const bookContainer = document.getElementById("book-container");
+        bookContainer.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const skeletonCard = document.createElement("div");
+          skeletonCard.classList.add("col-12", "col-md-6", "col-lg-4");
+          skeletonCard.innerHTML = `
+                        <div class="skeleton mb-3" style="padding: 16px;">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-line" style="width: 80%;"></div>
+                            <div class="skeleton-line" style="width: 60%;"></div>
+                            <div class="skeleton-line" style="width: 90%;"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-btn"></div>
                         </div>
                     `;
-                    bookContainer.appendChild(bookCard);
-                });
-            } catch (error) {
-                console.error("Error fetching books:", error);
-            }
+          bookContainer.appendChild(skeletonCard);
+        }
+      }
+
+      function renderBooks(books = allBooks) {
+        const bookContainer = document.getElementById("book-container");
+        const paginationWrapper = document.getElementById("pagination-wrapper");
+        bookContainer.innerHTML = "";
+
+        if (books.length === 0) {
+          if (paginationWrapper) paginationWrapper.style.display = "none"; // Sembunyikan navigasi jika tidak ada buku
+          bookContainer.innerHTML = `<p class="text-center mt-4">Tidak ada buku yang ditemukan.</p>`;
+          return;
+        } else {
+          if (paginationWrapper) paginationWrapper.style.display = ""; // Tampilkan navigasi jika ada buku
         }
 
-        // Panggil fungsi untuk mengambil buku ketika halaman dimuat
-        window.onload = getBooks;
+        const totalPages = Math.ceil(books.length / booksPerPage);
+        if (currentPage > totalPages) currentPage = totalPages; // Safety
+
+        const start = (currentPage - 1) * booksPerPage;
+        const end = start + booksPerPage;
+        const currentBooks = books.slice(start, end);
+
+        currentBooks.forEach((buku) => {
+          const bookCard = document.createElement("div");
+          bookCard.classList.add("col-12", "col-md-6", "col-lg-4");
+            bookCard.innerHTML = `
+                <a href="/detail/${buku.id_buku}" style="text-decoration:none; color:inherit;">
+                  <div class="card book-card mb-4 shadow-sm">
+                    <img src="/uploads/${buku.foto}" class="card-img-top book-image" alt="${buku.judul}" style="height:552px; object-fit:contain;">
+                    <div class="card-body">
+                      <h5 class="card-title fw-semibold">${buku.judul}</h5>
+                      <p class="card-text mb-1"><small class="text-muted">Penerbit:</small> ${buku.penerbit}</p>
+                      <p class="card-text mb-1"><small class="text-muted">Bahasa:</small> ${buku.bahasa}</p>
+                      <p class="card-text mb-1"><small class="text-muted">Kategori:</small> ${buku.kategori}</p>
+                      <p class="card-text mb-1"><small class="text-muted">Genre:</small> ${buku.genre}</p>
+                      <p class="card-text mb-2">
+                        <small class="text-muted">Rating:</small>
+                        ⭐ <span class="fw-bold">${buku.rating}</span>
+                      </p>
+                      <a href="/detail/${buku.id_buku}" class="btn btn-outline-primary w-100">Detail</a>
+                    </div>
+                  </div>
+                </a>
+              `;
+          bookContainer.appendChild(bookCard);
+        });
+      }
+
+      function renderPaginatedBooks() {
+        const books = allBooks;
+        const totalItems = books.length;
+        const totalPages = Math.ceil(totalItems / booksPerPage);
+        const startIdx = (currentPage - 1) * booksPerPage;
+        const endIdx = Math.min(startIdx + booksPerPage, totalItems);
+        const booksToShow = books.slice(startIdx, endIdx);
+        renderBooks(books);
+        renderPaginationNav(totalPages);
+        renderPaginationInfo(
+          startIdx,
+          endIdx,
+          totalItems,
+          currentPage,
+          totalPages
+        );
+      }
+
+      function renderPaginationNav(totalPages) {
+        const nav = document.getElementById("pagination-nav");
+        nav.innerHTML = "";
+        if (totalPages <= 1) return;
+
+        // Previous button
+        const prevLi = document.createElement("li");
+        prevLi.className = "page-item" + (currentPage === 1 ? " disabled" : "");
+        prevLi.innerHTML = `<a class="page-link" href="#" tabindex="-1">&laquo;</a>`;
+        prevLi.addEventListener("click", function (e) {
+          e.preventDefault();
+          if (currentPage > 1) {
+            currentPage--;
+            renderPaginatedBooks();
+          }
+        });
+        nav.appendChild(prevLi);
+
+        // Page numbers (show max 5 pages, with ... if needed)
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+        if (currentPage <= 3) {
+          endPage = Math.min(5, totalPages);
+        }
+        if (currentPage >= totalPages - 2) {
+          startPage = Math.max(1, totalPages - 4);
+        }
+        if (startPage > 1) {
+          let firstLi = document.createElement("li");
+          firstLi.className = "page-item";
+          firstLi.innerHTML = `<a class="page-link" href="#">1</a>`;
+          firstLi.addEventListener("click", function (e) {
+            e.preventDefault();
+            currentPage = 1;
+            renderPaginatedBooks();
+          });
+          nav.appendChild(firstLi);
+          if (startPage > 2) {
+            let dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            nav.appendChild(dots);
+          }
+        }
+        for (let i = startPage; i <= endPage; i++) {
+          let li = document.createElement("li");
+          li.className = "page-item" + (i === currentPage ? " active" : "");
+          li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+          li.addEventListener("click", function (e) {
+            e.preventDefault();
+            currentPage = i;
+            renderPaginatedBooks();
+          });
+          nav.appendChild(li);
+        }
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            let dots = document.createElement("li");
+            dots.className = "page-item disabled";
+            dots.innerHTML = `<span class="page-link">...</span>`;
+            nav.appendChild(dots);
+          }
+          let lastLi = document.createElement("li");
+          lastLi.className = "page-item";
+          lastLi.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+          lastLi.addEventListener("click", function (e) {
+            e.preventDefault();
+            currentPage = totalPages;
+            renderPaginatedBooks();
+          });
+          nav.appendChild(lastLi);
+        }
+
+        // Next button
+        const nextLi = document.createElement("li");
+        nextLi.className =
+          "page-item" + (currentPage === totalPages ? " disabled" : "");
+        nextLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+        nextLi.addEventListener("click", function (e) {
+          e.preventDefault();
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderPaginatedBooks();
+          }
+        });
+        nav.appendChild(nextLi);
+      }
+
+      function renderPaginationInfo(
+        startIdx,
+        endIdx,
+        totalItems,
+        currentPage,
+        totalPages
+      ) {
+        const info = document.getElementById("pagination-info");
+        if (totalItems === 0) {
+          info.textContent = "Tidak ada data buku.";
+        } else {
+          info.textContent = `Menampilkan ${
+            startIdx + 1
+          } - ${endIdx} dari ${totalItems} buku | Halaman ${currentPage} dari ${totalPages}`;
+        }
+      }
+      async function getBooks() {
+        isSearch = false;
+        showSkeleton();
+        try {
+          const response = await fetch("/api/books");
+          allBooks = await response.json();
+          currentPage = 1;
+          renderPaginatedBooks();
+        } catch (error) {
+          console.error("Error fetching books:", error);
+        }
+      }
+
+      async function searchBooks(query) {
+        isSearch = true;
+        showSkeleton();
+        try {
+          const response = await fetch(
+            `/api/search?q=${encodeURIComponent(query)}`
+          );
+          allBooks = await response.json();
+          currentPage = 1;
+          renderPaginatedBooks();
+        } catch (error) {
+          console.error("Error searching books:", error);
+        }
+      }
+
+      // Search form event
+      document
+        .getElementById("search-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const query = document.getElementById("search-input").value.trim();
+          if (query.length > 0) {
+            searchBooks(query);
+          } else {
+            getBooks();
+          }
+        });
+
+      window.onload = getBooks;
+
+      // AI Rekomendasi
+      // Ambil dan tampilkan rekomendasi
+      async function fetchRecommendations() {
+        try {
+          const response = await fetch("/api/rekomendasi_ai"); // sesuaikan endpoint
+          const data = await response.json();
+          
+          const container = document.getElementById("recommendation-container");
+          container.innerHTML = "";
+
+          if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = `
+              <div class="col-12 text-center">
+                <div class="text-danger" style="background-color:black">
+                  DEBUG: data: ${JSON.stringify(data)}
+                </div>
+                <p class="text-muted">Belum ada rekomendasi karena kamu belum memberikan review.</p>
+              </div>
+            `;
+            console.log("DEBUG: data:", data);
+            return;
+          }
+
+          data.forEach((buku) => {
+            const card = document.createElement("div");
+            card.classList.add("col-12", "col-md-6", "col-lg-4");
+            card.innerHTML = `
+              <a href="/detail/${buku.id_buku}" style="text-decoration:none; color:inherit;">
+                <div class="card book-card mb-4 shadow-sm">
+                  <img src="/uploads/${buku.foto}" class="card-img-top book-image" alt="${buku.judul}" style="height:552px; object-fit:contain;">
+                  <div class="card-body">
+                    <h5 class="card-title fw-semibold">${buku.judul}</h5>
+                    <p class="card-text mb-1"><small class="text-muted">Penerbit:</small> ${buku.penerbit}</p>
+                    <p class="card-text mb-1"><small class="text-muted">Bahasa:</small> ${buku.bahasa}</p>
+                    <p class="card-text mb-1"><small class="text-muted">Kategori:</small> ${buku.kategori}</p>
+                    <p class="card-text mb-1"><small class="text-muted">Genre:</small> ${buku.genre}</p>
+                    <p class="card-text mb-2">
+                      <small class="text-muted">Rating:</small>
+                      ⭐ <span class="fw-bold">${buku.rating}</span>
+                    </p>
+                    <a href="/detail/${buku.id_buku}" class="btn btn-outline-primary w-100">Detail</a>
+                  </div>
+                </div>
+              </a>
+            `;
+            container.appendChild(card);
+          });
+
+        } catch (error) {
+          console.error("Gagal memuat rekomendasi:", error);
+          const container = document.getElementById("recommendation-container");
+          container.innerHTML = `
+            <div class="col-12 text-center">
+              <p class="text-danger">Terjadi kesalahan saat mengambil rekomendasi.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Panggil saat halaman dimuat
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchRecommendations();
+      });
+
+
     </script>
-
-    <script src="javascript.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-        crossorigin="anonymous"></script>
-</body>
-
+  </body>
 </html>

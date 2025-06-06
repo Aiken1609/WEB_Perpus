@@ -1,126 +1,181 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Academic Resource Center</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #2C075C, #4B177A);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Academic Resource Center</title>
+  <style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #2C075C, #4B177A);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
 
-        .box {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
+    .box {
+        background-color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+    }
 
-        .box img {
-            display: block;
-            margin: 0 auto 1rem auto;
-            width: 120px;
-        }
+    .box img {
+        display: block;
+        margin: 0 auto 1rem auto;
+        width: 120px;
+    }
 
-        .box h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #2C075C;
-        }
+    .box h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #2C075C;
+    }
 
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
+    label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
 
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 1.2rem;
-            font-size: 1rem;
-        }
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 1.2rem;
+        font-size: 1rem;
+    }
 
-        input:focus {
-            border-color: #4B177A;
-            outline: none;
-        }
+    input:focus {
+        border-color: #4B177A;
+        outline: none;
+    }
 
-        button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #4B177A;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #4B177A;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-        button:hover {
-            background-color: #370E5A;
-        }
+    button:hover {
+        background-color: #370E5A;
+    }
 
-        .error {
-            color: red;
-            text-align: center;
-            margin-top: 1rem;
-        }
+    .error {
+        color: red;
+        text-align: center;
+        margin-top: 1rem;
+    }
 
-        .register {
-            text-align: center;
-            margin-top: 1.2rem;
-            font-size: 0.95rem;
-        }
+    .register {
+        text-align: center;
+        margin-top: 1.2rem;
+        font-size: 0.95rem;
+    }
 
-        .register a {
-            color: #4B177A;
-            text-decoration: none;
-            font-weight: bold;
-        }
+    .register a {
+        color: #4B177A;
+        text-decoration: none;
+        font-weight: bold;
+    }
 
-        .register a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    .register a:hover {
+        text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div style="margin-right: auto; margin-left: auto;">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo ARC" style="height: 300px; width: auto;">
+  <div style="margin-right: auto; margin-left: auto;">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo ARC" style="height: 300px; width: auto;">
+  </div>
+  <div class="box" style="margin-right: auto; margin-left: auto;">
+    <h2>Login ke ARC</h2>
+    <form id="login-form">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="error" id="error-msg" style="transition: transform 0.15s;"></p>
+
+    <div class="register">
+      Belum punya akun? <a href="{{ url_for('auth_routes.daftar') }}">Daftar</a>
     </div>
-    <div style="margin-right: auto;" class="box" action="">
-        <h2>Login ke ARC</h2>
-        <form method="POST">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+  </div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+<script>
+    // Tambahkan animasi shake saat error muncul
+    function shakeError() {
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.style.transform = 'translateX(0)';
+        errorMsg.offsetWidth; // force reflow
+        errorMsg.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+            errorMsg.style.transform = 'translateX(10px)';
+            setTimeout(() => {
+                errorMsg.style.transform = 'translateX(0)';
+            }, 75);
+        }, 75);
+    }
 
-            <button type="submit">Login</button>
-        </form>
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMsg = document.getElementById('error-msg');
 
-        <div class="register">
-            Belum punya akun? <a href="{{ url_for('daftar') }}">Daftar</a>
-        </div>
-    </div>
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                errorMsg.style.display = 'none'; // Hide error message on success
+                if (data.user.role === 'admin') {
+                    window.location.href = '/dashboard';
+                } else if (data.user.role === 'user') {
+                    window.location.href = '/buku';
+                } else {
+                    alert('Role tidak dikenali: ' + data.user.role);
+                    errorMsg.textContent = 'Role tidak dikenali.';
+                    errorMsg.style.display = 'block'; // Show error for unrecognized role
+                }
+            } else {
+                errorMsg.style.display = 'block'; // Show error message
+                errorMsg.textContent = data.message || 'Login gagal!';
+                shakeError()
+            }
+        } catch (err) {
+            errorMsg.style.display = 'block'; // Show error message
+            errorMsg.textContent = 'Terjadi kesalahan saat menghubungi server.';
+        }
+    });
+</script>
+
+
 </body>
 </html>
