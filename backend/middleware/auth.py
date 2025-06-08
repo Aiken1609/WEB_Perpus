@@ -3,7 +3,7 @@ from functools import wraps
 from flask import request, jsonify, redirect, url_for, g
 from flask import current_app as app
 import jwt
-from models import User
+from backend.models import User
 
 def token_required(f):
     @wraps(f)

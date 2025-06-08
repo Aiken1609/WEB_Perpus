@@ -1,7 +1,6 @@
-from flask import Blueprint, g, render_template, current_app, send_from_directory
+from flask import Blueprint, render_template, current_app, send_from_directory
 from ..middleware.auth import token_required, admin_required
-from models import Buku, User
-from ..utils.fungsi_user import get_personal_reviews
+from backend.models import Buku
 
 page_routes = Blueprint('page_routes', __name__)
 
@@ -58,21 +57,3 @@ def edit_book(id_buku):
 @page_routes.route('/login', methods=['GET'])
 def login():
     return render_template('login.html')
-
-@page_routes.route('/profile')
-@token_required
-def profile():
-    user_data = g.current_user
-    id_user = user_data['id_user']
-    user = User.query.get(id_user)
-
-    data = get_personal_reviews(id_user)
-    reviewed_books = data['reviews']
-    user_review_info = data['user']  
-
-    return render_template(
-        'profile.html',
-        user=user,
-        reviewed_books=reviewed_books,
-        user_review_info=user_review_info
-    )

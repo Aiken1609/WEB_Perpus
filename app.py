@@ -1,10 +1,10 @@
 from flask import Flask
 import os
-from models import db
+from backend.models import db
 from backend.routes.page_routes import page_routes
 from backend.routes.api_routes import api_routes
 from backend.routes.auth_routes import auth_routes
-from backend.AI.route import ai_blueprint
+from backend.AI.AI_route import ai_blueprint
 # from backend.routes.api_routes import api_personal_reviews
 # from backend.AI.logic import set_api_personal_reviews
 

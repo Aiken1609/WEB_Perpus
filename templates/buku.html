@@ -333,27 +333,22 @@
       // AI Rekomendasi
       // Ambil dan tampilkan rekomendasi
       async function fetchRecommendations() {
+        const container = document.getElementById("recommendation-container");
+        container.innerHTML = "";
         try {
-          const response = await fetch("/api/rekomendasi_ai"); // sesuaikan endpoint
+          const response = await fetch("/api/readRekomendasi");
           const data = await response.json();
-          
-          const container = document.getElementById("recommendation-container");
-          container.innerHTML = "";
 
-          if (!Array.isArray(data) || data.length === 0) {
+          if (!data || data.status !== "sukses" || !Array.isArray(data.rekomendasi) || data.jumlah === 0) {
             container.innerHTML = `
               <div class="col-12 text-center">
-                <div class="text-danger" style="background-color:black">
-                  DEBUG: data: ${JSON.stringify(data)}
-                </div>
                 <p class="text-muted">Belum ada rekomendasi karena kamu belum memberikan review.</p>
               </div>
             `;
-            console.log("DEBUG: data:", data);
             return;
           }
 
-          data.forEach((buku) => {
+          data.rekomendasi.forEach((buku) => {
             const card = document.createElement("div");
             card.classList.add("col-12", "col-md-6", "col-lg-4");
             card.innerHTML = `
@@ -362,8 +357,6 @@
                   <img src="/uploads/${buku.foto}" class="card-img-top book-image" alt="${buku.judul}" style="height:552px; object-fit:contain;">
                   <div class="card-body">
                     <h5 class="card-title fw-semibold">${buku.judul}</h5>
-                    <p class="card-text mb-1"><small class="text-muted">Penerbit:</small> ${buku.penerbit}</p>
-                    <p class="card-text mb-1"><small class="text-muted">Bahasa:</small> ${buku.bahasa}</p>
                     <p class="card-text mb-1"><small class="text-muted">Kategori:</small> ${buku.kategori}</p>
                     <p class="card-text mb-1"><small class="text-muted">Genre:</small> ${buku.genre}</p>
                     <p class="card-text mb-2">
@@ -379,22 +372,24 @@
           });
 
         } catch (error) {
-          console.error("Gagal memuat rekomendasi:", error);
-          const container = document.getElementById("recommendation-container");
           container.innerHTML = `
             <div class="col-12 text-center">
+              <div id="debug-buku" class="alert alert-secondary mt-3" style="word-break:break-all; font-size:13px; display:none;"></div>
               <p class="text-danger">Terjadi kesalahan saat mengambil rekomendasi.</p>
             </div>
           `;
+          console.error("Gagal memuat rekomendasi:", error);
         }
       }
-
-      // Panggil saat halaman dimuat
+      // Fungsi untuk menampilkan data buku di debug div
+      function showDebugBuku(data) {
+        const debugDiv = document.getElementById("debug-buku");
+        debugDiv.style.display = "block";
+        debugDiv.textContent = JSON.stringify(data, null, 2);
+      }
       document.addEventListener("DOMContentLoaded", () => {
         fetchRecommendations();
       });
-
-
     </script>
   </body>
 </html>

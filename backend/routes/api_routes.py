@@ -1,12 +1,62 @@
 from flask import Blueprint, render_template, request, jsonify, g, current_app
 from ..middleware.auth import token_required, admin_required
-from models import db, Buku, User, Review
+from backend.models import db, Buku, User, Review, Rekomendasi
 from ..utils.fungsi_user import get_personal_reviews
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 import os
+from backend.AI.AI_route import buat_rekomendasi_user
 
 api_routes = Blueprint('api_routes', __name__)
+
+@api_routes.route('/profile')
+@token_required
+def profile():
+    user_data = g.current_user
+    id_user = user_data['id_user']
+    user = User.query.get(id_user)
+
+    data = get_personal_reviews(id_user)
+    reviewed_books = data['reviewed_books']
+    user_review_info = data['user']  
+
+    return render_template(
+        'profile.html',
+        user=user,
+        reviewed_books=reviewed_books,
+        user_review_info=user_review_info
+    )
+
+@api_routes.route('/api/readRekomendasi', methods=['GET'])
+@token_required
+def get_rekomendasi_user():
+    id_user = g.current_user['id_user']
+
+    # Hapus rekomendasi lama user ini
+    db.session.query(Rekomendasi).filter_by(id_user=id_user).delete()
+    db.session.commit()
+
+    # Buat rekomendasi baru (menggunakan g.current_user di dalam fungsinya)
+    buat_rekomendasi_user()
+
+    # Ambil hasil rekomendasi terbaru dari DB
+    rekom = db.session.query(Rekomendasi, Buku).join(Buku, Rekomendasi.id_buku == Buku.id_buku)\
+        .filter(Rekomendasi.id_user == id_user).all()
+
+    hasil = [{
+        'id_buku': b.id_buku,
+        'judul': b.judul,
+        'foto': b.foto,
+        'genre': b.genre,
+        'kategori': b.kategori,
+        'rating': b.rating
+    } for _, b in rekom]
+
+    return jsonify({
+        "status": "sukses",
+        "jumlah": len(hasil),
+        "rekomendasi": hasil
+    })
 
 @api_routes.route('/api/reviews_personal', methods=['GET'])
 @token_required
@@ -261,7 +311,14 @@ def search_users():
 
     return jsonify(result)
 
-# CRUD Admin
+
+##################################################################################################################
+# CRUD Admin & User
+##################################################################################################################
+
+
+#USER CRUD
+
 @api_routes.route('/detail/<int:id_buku>', methods=['GET'])
 @token_required
 def detail_buku(id_buku):
@@ -277,7 +334,60 @@ def detail_buku(id_buku):
         book_data = response.get_json()
     return render_template('detail.html', buku=book_data)
 
+@api_routes.route('/edit_profile', methods=['PUT'])
+@token_required
+def edit_profile():
+    user_data = g.current_user
+    user = User.query.get(user_data['id_user'])
+    username = request.form.get('username')
+    password = request.form.get('password')
+    foto = request.files.get('foto')
+
+    # Cek apakah username sudah digunakan oleh user lain
+    if username and username != user.username:
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return jsonify({'error': 'Username sudah digunakan!'}), 400
+        user.username = username
+
+    if password:
+        user.password = generate_password_hash(password)
+    if foto and foto.filename:
+        filename = secure_filename(foto.filename)
+        foto.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+        user.foto = filename
+
+    db.session.commit()
+    return jsonify({'message': 'Profil berhasil diperbarui'})
+
+@api_routes.route('/delete_review/<int:id_buku>', methods=['DELETE'])
+@token_required
+def delete_review(id_buku):
+    user_data = g.current_user
+    id_user = user_data['id_user']
+    
+    review = Review.query.filter_by(id_buku=id_buku, id_user=id_user).first()
+    if not review:
+        return jsonify({'message': 'Review tidak ditemukan'}), 404
+
+    db.session.delete(review)
+    
+    # Update rating buku
+    reviews = Review.query.filter_by(id_buku=id_buku).all()
+    avg_rating = sum([r.rating for r in reviews]) / len(reviews) if reviews else 0
+    buku = Buku.query.get(id_buku)
+    if buku:
+        buku.rating = round(avg_rating, 2)
+        
+    db.session.commit()
+    return jsonify({'message': 'Review berhasil dihapus'})
+
+
+#ADMIN CRUD
+
 @api_routes.route('/add_book', methods=['POST'])
+@token_required
+@admin_required
 def add_book():
     data = request.get_json()
     buku = Buku(
@@ -295,6 +405,8 @@ def add_book():
     return jsonify({"message": "Buku berhasil ditambahkan!"}), 201
 
 @api_routes.route('/add_books', methods=['POST'])
+@token_required
+@admin_required
 def add_books():
     data = request.get_json()
     
@@ -355,32 +467,6 @@ def update_book(id_buku):
     db.session.commit()
     return jsonify({"message": "Buku berhasil diupdate!"})
 
-@api_routes.route('/edit_profile', methods=['PUT'])
-@token_required
-def edit_profile():
-    user_data = g.current_user
-    user = User.query.get(user_data['id_user'])
-    username = request.form.get('username')
-    password = request.form.get('password')
-    foto = request.files.get('foto')
-
-    # Cek apakah username sudah digunakan oleh user lain
-    if username and username != user.username:
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            return jsonify({'error': 'Username sudah digunakan!'}), 400
-        user.username = username
-
-    if password:
-        user.password = generate_password_hash(password)
-    if foto and foto.filename:
-        filename = secure_filename(foto.filename)
-        foto.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-        user.foto = filename
-
-    db.session.commit()
-    return jsonify({'message': 'Profil berhasil diperbarui'})
-
 @api_routes.route('/delete_book/<int:id_buku>', methods=['DELETE'])
 @token_required
 @admin_required
@@ -395,25 +481,3 @@ def delete_book(id_buku):
     db.session.delete(book)
     db.session.commit()
     return jsonify({"message": "Buku berhasil dihapus!"})
-
-@api_routes.route('/delete_review/<int:id_buku>', methods=['DELETE'])
-@token_required
-def delete_review(id_buku):
-    user_data = g.current_user
-    id_user = user_data['id_user']
-    
-    review = Review.query.filter_by(id_buku=id_buku, id_user=id_user).first()
-    if not review:
-        return jsonify({'message': 'Review tidak ditemukan'}), 404
-
-    db.session.delete(review)
-    
-    # Update rating buku
-    reviews = Review.query.filter_by(id_buku=id_buku).all()
-    avg_rating = sum([r.rating for r in reviews]) / len(reviews) if reviews else 0
-    buku = Buku.query.get(id_buku)
-    if buku:
-        buku.rating = round(avg_rating, 2)
-        
-    db.session.commit()
-    return jsonify({'message': 'Review berhasil dihapus'})

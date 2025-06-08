@@ -4,7 +4,7 @@ import jwt, datetime, os
 from flask import current_app as app
 from werkzeug.utils import secure_filename
 from ..middleware.auth import token_required, get_current_user_info
-from models import db, Buku, User, Review
+from backend.models import db, Buku, User, Review
 
 
 auth_routes = Blueprint('auth_routes', __name__)
@@ -14,8 +14,9 @@ def api_login():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
         return jsonify({'message': 'Username dan password wajib diisi!'}), 400
-
-    user = User.query.filter_by(username=data['username']).first()
+    print("Data login:", data)  # debug print
+    user = User.query.filter_by(username=data.get('username')).first()
+    print("User ditemukan:", user)  # debug print
     if not user:
         return jsonify({'message': 'Akun belum terdaftar!'}), 404
 

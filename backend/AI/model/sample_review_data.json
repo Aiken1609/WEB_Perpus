@@ -1,0 +1,350 @@
+{
+  "reviewed_books": [
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Jepang",
+          "foto": "rezero_ln_vol-1.jpg",
+          "genre": "Sci-fi",
+          "id_buku": 1,
+          "judul": "Re:Zero kara Hajimeru Isekai Seikatsu",
+          "kategori": "Novel",
+          "penerbit": "Media Factory",
+          "rating": 4.7
+        },
+        "created_at": "2025-06-01T10:00:00Z",
+        "id_review": 1,
+        "rating": 5
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Jepang",
+          "foto": "doraemon_vol1.jpg",
+          "genre": "Pengetahuan Umum",
+          "id_buku": 2,
+          "judul": "Doraemon Vol.1",
+          "kategori": "Komik",
+          "penerbit": "Shogakukan",
+          "rating": 4.5
+        },
+        "created_at": "2025-06-01T11:00:00Z",
+        "id_review": 2,
+        "rating": 4
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Inggris",
+          "foto": "harry_potter_philosophers_stone.jpg",
+          "genre": "Sci-fi",
+          "id_buku": 3,
+          "judul": "Harry Potter and the Philosopher's Stone",
+          "kategori": "Novel",
+          "penerbit": "Bloomsbury",
+          "rating": 4.8
+        },
+        "created_at": "2025-06-01T12:00:00Z",
+        "id_review": 3,
+        "rating": 5
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Inggris",
+          "foto": "the_hobbit.jpg",
+          "genre": "Sci-fi",
+          "id_buku": 4,
+          "judul": "The Hobbit",
+          "kategori": "Novel",
+          "penerbit": "HarperCollins",
+          "rating": 4.6
+        },
+        "created_at": "2025-06-01T13:00:00Z",
+        "id_review": 4,
+        "rating": 4
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Jepang",
+          "foto": "NarutoCoverTankobon1.jpg",
+          "genre": "Petualangan",
+          "id_buku": 5,
+          "judul": "Naruto Vol.1",
+          "kategori": "Komik",
+          "penerbit": "Shueisha",
+          "rating": 4.9
+        },
+        "created_at": "2025-06-01T14:00:00Z",
+        "id_review": 5,
+        "rating": 5
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Indonesia",
+          "foto": "ID_EDHP2019MTH12BR.jpg",
+          "genre": "Pengetahuan Umum",
+          "id_buku": 6,
+          "judul": "Ensiklopedia Dunia Hewan",
+          "kategori": "Ensiklopedia",
+          "penerbit": "Gramedia",
+          "rating": 4.2
+        },
+        "created_at": "2025-06-01T15:00:00Z",
+        "id_review": 6,
+        "rating": 3
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Jepang",
+          "foto": "51gTbdvr9tL._SY445_SX342_.jpg",
+          "genre": "Horor",
+          "id_buku": 7,
+          "judul": "Tokyo Ghoul Vol.1",
+          "kategori": "Komik",
+          "penerbit": "Shueisha",
+          "rating": 4.3
+        },
+        "created_at": "2025-06-01T16:00:00Z",
+        "id_review": 7,
+        "rating": 4
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Indonesia",
+          "foto": "335-scaled.jpg",
+          "genre": "Sejarah",
+          "id_buku": 8,
+          "judul": "Sejarah Indonesia Modern 1200-2008",
+          "kategori": "Ensiklopedia",
+          "penerbit": "Yayasan Sejarah Indonesia",
+          "rating": 4.1
+        },
+        "created_at": "2025-06-01T17:00:00Z",
+        "id_review": 8,
+        "rating": 4
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Jepang",
+          "foto": "667c4f1ff860aa24bc6e2d0f-one-piece-vol-1-romance-dawn.jpg",
+          "genre": "Petualangan",
+          "id_buku": 9,
+          "judul": "One Piece Vol.1",
+          "kategori": "Komik",
+          "penerbit": "Shueisha",
+          "rating": 4.9
+        },
+        "created_at": "2025-06-01T18:00:00Z",
+        "id_review": 9,
+        "rating": 5
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "bahasa": "Indonesia",
+          "foto": "c2ad9383bf17d8e342e36ee989beb771.jpg",
+          "genre": "Horor",
+          "id_buku": 10,
+          "judul": "Novel Matahari Terbenam",
+          "kategori": "Novel",
+          "penerbit": "Basabasi",
+          "rating": 4.0
+        },
+        "created_at": "2025-06-01T19:00:00Z",
+        "id_review": 10,
+        "rating": 3
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 11,
+          "judul": "A Brief History of Time",
+          "bahasa": "Inggris",
+          "kategori": "Ensiklopedia",
+          "genre": "Sains",
+          "penerbit": "Bantam Books",
+          "rating": 4.4,
+          "foto": "a_brief_history_of_time.jpg"
+        },
+        "id_review": 11,
+        "rating": 4,
+        "created_at": "2025-06-02T10:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 12,
+          "judul": "Kambing Jantan",
+          "bahasa": "Indonesia",
+          "kategori": "Novel",
+          "genre": "Komedi",
+          "penerbit": "Bukune",
+          "rating": 4.0,
+          "foto": "kambing_jantan.jpg"
+        },
+        "id_review": 12,
+        "rating": 3,
+        "created_at": "2025-06-02T11:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 13,
+          "judul": "Sherlock Holmes: A Study in Scarlet",
+          "bahasa": "Inggris",
+          "kategori": "Novel",
+          "genre": "Misteri",
+          "penerbit": "Ward Lock & Co",
+          "rating": 4.7,
+          "foto": "sherlock_study_in_scarlet.jpg"
+        },
+        "id_review": 13,
+        "rating": 5,
+        "created_at": "2025-06-02T12:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 14,
+          "judul": "Bumi Manusia",
+          "bahasa": "Indonesia",
+          "kategori": "Novel",
+          "genre": "Sejarah",
+          "penerbit": "Lentera Dipantara",
+          "rating": 4.5,
+          "foto": "bumi_manusia.jpg"
+        },
+        "id_review": 14,
+        "rating": 4,
+        "created_at": "2025-06-02T13:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 15,
+          "judul": "Chainsaw Man Vol.1",
+          "bahasa": "Jepang",
+          "kategori": "Komik",
+          "genre": "Horor",
+          "penerbit": "Shueisha",
+          "rating": 4.6,
+          "foto": "chainsawman_vol1.jpg"
+        },
+        "id_review": 15,
+        "rating": 4,
+        "created_at": "2025-06-02T14:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 16,
+          "judul": "The Martian",
+          "bahasa": "Inggris",
+          "kategori": "Novel",
+          "genre": "Sci-fi",
+          "penerbit": "Crown Publishing Group",
+          "rating": 4.8,
+          "foto": "the_martian.jpg"
+        },
+        "id_review": 16,
+        "rating": 5,
+        "created_at": "2025-06-02T15:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 17,
+          "judul": "Raditya Dika: Manusia Setengah Salmon",
+          "bahasa": "Indonesia",
+          "kategori": "Novel",
+          "genre": "Komedi",
+          "penerbit": "Bukune",
+          "rating": 3.9,
+          "foto": "setengah_salmon.jpg"
+        },
+        "id_review": 17,
+        "rating": 4,
+        "created_at": "2025-06-02T16:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 18,
+          "judul": "Attack on Titan Vol.1",
+          "bahasa": "Jepang",
+          "kategori": "Komik",
+          "genre": "Petualangan",
+          "penerbit": "Kodansha",
+          "rating": 4.7,
+          "foto": "aot_vol1.jpg"
+        },
+        "id_review": 18,
+        "rating": 5,
+        "created_at": "2025-06-02T17:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 19,
+          "judul": "Think and Grow Rich",
+          "bahasa": "Inggris",
+          "kategori": "Ensiklopedia",
+          "genre": "Motivasi",
+          "penerbit": "The Ralston Society",
+          "rating": 4.3,
+          "foto": "think_and_grow_rich.jpg"
+        },
+        "id_review": 19,
+        "rating": 3,
+        "created_at": "2025-06-02T18:00:00Z"
+      }
+    },
+    {
+      "review": {
+        "buku": {
+          "id_buku": 20,
+          "judul": "Laskar Pelangi",
+          "bahasa": "Indonesia",
+          "kategori": "Novel",
+          "genre": "Drama",
+          "penerbit": "Bentang Pustaka",
+          "rating": 4.6,
+          "foto": "laskar_pelangi.jpg"
+        },
+        "id_review": 20,
+        "rating": 5,
+        "created_at": "2025-06-02T19:00:00Z"
+      }
+    }
+  ],
+  "user": {
+    "foto": "test.jpeg",
+    "id_user": 0,
+    "role": "user",
+    "username": "testuser"
+  }
+}
