@@ -1,6 +1,6 @@
 # backend/AI/AI_route.py
 
-from flask import Blueprint, g, request, jsonify
+from flask import Blueprint, g, jsonify
 from datetime import datetime
 from .AI_logic import predict_top_books
 from backend.utils.fungsi_user import get_personal_reviews
@@ -23,7 +23,7 @@ def buat_rekomendasi_user():
 
     # Dapatkan rekomendasi top-N
     recommendations = predict_top_books(user_reviews, top_n=9)
-    print(f"Rekomendasi untuk user {user_id}: {recommendations}")
+    # print(f"Rekomendasi untuk user {user_id}: {recommendations}") # debug print
     # Simpan ke tabel rekomendasi
     now = datetime.utcnow()
     rec_objs = []

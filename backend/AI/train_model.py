@@ -19,7 +19,6 @@ for item in data["reviewed_books"]:
     buku = item["review"]["buku"]
     rows.append({
         "id_buku": buku["id_buku"],           # ID hanya untuk referensi
-        "bahasa": buku["bahasa"],
         "kategori": buku["kategori"],
         "genre": buku["genre"],
         "rating_buku": buku["rating"],
@@ -27,12 +26,13 @@ for item in data["reviewed_books"]:
     })
 df = pd.DataFrame(rows)
 
-print("Data parsed ke DataFrame:")
-print(df.head())
+# print("Data parsed ke DataFrame:")
+# print(df.head())
 
 # 3. Validasi jumlah data per kelas rating
 rating_counts = df["rating_user"].value_counts()
-print("\nJumlah data per kelas rating:")
+# print("\nJumlah data per kelas rating:")
+
 print(rating_counts)
 
 # 4. Siapkan fitur (X) dan label (y)
@@ -40,7 +40,7 @@ X = df.drop(columns=["id_buku", "rating_user"])
 y = df["rating_user"]
 
 # 5. Preprocessing pipeline: OneHotEncoder untuk fitur kategorikal
-categorical_cols = ["bahasa", "kategori", "genre"]
+categorical_cols = ["kategori", "genre"]
 numeric_cols = ["rating_buku"]
 
 preprocessor = ColumnTransformer(

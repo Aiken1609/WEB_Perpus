@@ -14,9 +14,9 @@ def api_login():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
         return jsonify({'message': 'Username dan password wajib diisi!'}), 400
-    print("Data login:", data)  # debug print
+    # print("Data login:", data)  # debug print
     user = User.query.filter_by(username=data.get('username')).first()
-    print("User ditemukan:", user)  # debug print
+    # print("User ditemukan:", user)  # debug print
     if not user:
         return jsonify({'message': 'Akun belum terdaftar!'}), 404
 
@@ -29,7 +29,7 @@ def api_login():
         'role': user.role,
         'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=2)
     }, app.config['SECRET_KEY'], algorithm='HS256')
-
+    print("Token dari cookie:", token)
     response = make_response(jsonify({
         'message': 'Login berhasil',
         'user': {

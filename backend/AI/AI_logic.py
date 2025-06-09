@@ -22,7 +22,7 @@ def predict_top_books(user_reviews: list, top_n: int = 9) -> list:
 
     pref_df = pd.DataFrame(positive)
     preferensi = {}
-    for col in ["kategori", "genre", "bahasa"]:
+    for col in ["kategori", "genre"]:
         if col in pref_df.columns:
             preferensi[col] = pref_df[col].mode()[0]
 
@@ -56,7 +56,7 @@ def predict_top_books(user_reviews: list, top_n: int = 9) -> list:
     } for b in candidates])
 
     # 5. Prediksi rating menggunakan pipeline model
-    feature_cols = ["bahasa", "kategori", "genre", "rating_buku"]
+    feature_cols = ["kategori", "genre", "rating_buku"]
     df_feat = df_cand[feature_cols]
 
     df_cand["predicted_rating"] = model.predict(df_feat)

@@ -9,7 +9,7 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.cookies.get('token')
-        print("Token dari cookie:", token)  # debug print
+        # print("Token dari cookie:", token)  # debug print
         if not token:
             auth_header = request.headers.get('Authorization')
             if auth_header and auth_header.startswith('Bearer '):
