@@ -13,7 +13,6 @@ app = Flask(__name__)
 load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 JWT_SECRET = app.config['SECRET_KEY']
 
 db.init_app(app)
