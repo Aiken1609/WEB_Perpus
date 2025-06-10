@@ -55,8 +55,14 @@
                 <label for="judul" class="form-label">Judul:</label>
                 <input type="text" class="form-control" id="judul" name="judul" required>
 
-                <label for="foto" class="form-label">Foto Buku:</label>
-                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                <div class="mb-3">
+                    <label for="foto" class="form-label">Foto Buku:</label>
+                    <!-- Card untuk menampilkan visualisasi foto -->
+                    <div id="fotoPreviewCard" class="card mb-2 rounded shadow" style="max-width: 200px;">
+                        <img id="fotoPreview" src="" class="card-img-top rounded" alt="Foto Buku"  style="max-width:100%; height: fit-content; object-fit: cover;">
+                    </div>
+                    <input type="text" class="form-control" id="foto" name="foto" accept="image/*">
+                </div>
 
                 <label for="penerbit" class="form-label mt-3">Penerbit:</label>
                 <input type="text" class="form-control" id="penerbit" name="penerbit">
@@ -143,6 +149,17 @@
                 console.error('Error:', error);
             });
         });
+        
+        function tampilkanFoto(fotoUrl) {
+            const img = document.getElementById('fotoPreview');
+            if (fotoUrl) {
+                img.src = fotoUrl;
+                img.alt = "Foto Buku";
+            } else {
+                img.src = "https://via.placeholder.com/200x200?text=No+Image";
+                img.alt = "Tidak ada foto";
+            }
+        }
     </script>
 </body>
 </html>
