@@ -16,8 +16,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 JWT_SECRET = app.config['SECRET_KEY']
 
-
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 db.init_app(app)
 app.register_blueprint(page_routes)
 app.register_blueprint(api_routes)
