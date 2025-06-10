@@ -341,7 +341,7 @@ def edit_profile():
     user = User.query.get(user_data['id_user'])
     username = request.form.get('username')
     password = request.form.get('password')
-    foto = request.files.get('foto')
+    foto = request.form.get('foto')
 
     # Cek apakah username sudah digunakan oleh user lain
     if username and username != user.username:

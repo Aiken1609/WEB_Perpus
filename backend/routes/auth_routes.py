@@ -64,7 +64,7 @@ def daftar():
             return render_template('daftar.html', error="Username sudah digunakan!")
 
         hashed_password = generate_password_hash(password)
-        foto = request.files.get('foto')
+        foto = request.form.get('foto')
         filename = secure_filename(foto.filename) if foto and foto.filename else 'default_profile.jpg'
         if foto and foto.filename:
             foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
