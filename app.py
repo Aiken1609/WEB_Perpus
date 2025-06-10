@@ -5,7 +5,7 @@ from backend.routes.page_routes import page_routes
 from backend.routes.api_routes import api_routes
 from backend.routes.auth_routes import auth_routes
 from backend.AI.AI_route import ai_blueprint
-from supabase import create_client
+
 # from backend.routes.api_routes import api_personal_reviews
 # from backend.AI.logic import set_api_personal_reviews
 from dotenv import load_dotenv
@@ -15,10 +15,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 JWT_SECRET = app.config['SECRET_KEY']
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 db.init_app(app)
