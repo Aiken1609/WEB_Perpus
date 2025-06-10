@@ -19,7 +19,7 @@
       <div class="profile-card">
         <div class="profile-image">
           <img
-        src="/uploads/{{ user_review_info.foto or 'default_profile.jpg' }}"
+        src="/ststic/{{ user_review_info.foto or 'default_profile.jpg' }}"
           />
         </div>
         <div class="profile-info w-100">
@@ -113,8 +113,8 @@
                   </div>
                   <div class="col-md-3">
                     <img
-                      src="/uploads/{{ review.buku.foto }}"
-                      alt="/uploads/default_buku.png"
+                      src="{{ review.buku.foto }}"
+                      alt="/static/default_buku.png"
                       style="
                         max-height: 200px;
                         width: auto;

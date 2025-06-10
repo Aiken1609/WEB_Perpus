@@ -21,7 +21,7 @@
         <div class="d-flex align-items-center gap-3">
           <img
             id="user-photo"
-            src="/uploads/default_profile.jpg"
+            src="/static/default_profile.jpg"
             alt="Foto Profil"
             class="rounded-circle"
             style="width: 40px; height: 40px; object-fit: cover"
@@ -50,7 +50,7 @@
       .then((userini) => {
         document.getElementById("user-info").textContent = userini.username;
         document.getElementById("user-photo").src =
-          "/uploads/" + (userini.foto || "default_profile.jpg");
+          "/static/" + (userini.foto || "default_profile.jpg");
 
         const nav = document.getElementById("dynamic-nav");
         let html = `

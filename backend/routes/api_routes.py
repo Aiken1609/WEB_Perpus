@@ -3,7 +3,6 @@ from ..middleware.auth import token_required, admin_required
 from backend.models import db, Buku, User, Review, Rekomendasi
 from ..utils.fungsi_user import get_personal_reviews
 from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
 import os
 from backend.AI.AI_route import buat_rekomendasi_user
 
@@ -32,14 +31,11 @@ def profile():
 def get_rekomendasi_user():
     id_user = g.current_user['id_user']
 
-    # Hapus rekomendasi lama user ini
     db.session.query(Rekomendasi).filter_by(id_user=id_user).delete()
     db.session.commit()
 
-    # Buat rekomendasi baru (menggunakan g.current_user di dalam fungsinya)
     buat_rekomendasi_user()
 
-    # Ambil hasil rekomendasi terbaru dari DB
     rekom = db.session.query(Rekomendasi, Buku).join(Buku, Rekomendasi.id_buku == Buku.id_buku)\
         .filter(Rekomendasi.id_user == id_user).all()
 
@@ -322,12 +318,10 @@ def search_users():
 @api_routes.route('/detail/<int:id_buku>', methods=['GET'])
 @token_required
 def detail_buku(id_buku):
-    # Ambil data buku menggunakan fungsi get_book_detail
     response = get_book_detail(id_buku)
     if response.status_code == 404:
         return render_template('404.html'), 404
 
-    # response bisa berupa tuple (json, status_code) atau Response object
     if isinstance(response, tuple):
         book_data = response[0].get_json()
     else:
@@ -341,9 +335,8 @@ def edit_profile():
     user = User.query.get(user_data['id_user'])
     username = request.form.get('username')
     password = request.form.get('password')
-    foto = request.form.get('foto')
+    foto = request.form.get('foto')  # Sekarang berupa link url
 
-    # Cek apakah username sudah digunakan oleh user lain
     if username and username != user.username:
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
@@ -352,10 +345,8 @@ def edit_profile():
 
     if password:
         user.password = generate_password_hash(password)
-    if foto and foto.filename:
-        filename = secure_filename(foto.filename)
-        foto.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-        user.foto = filename
+    if foto:
+        user.foto = foto  # Simpan langsung link url
 
     db.session.commit()
     return jsonify({'message': 'Profil berhasil diperbarui'})
@@ -372,7 +363,6 @@ def delete_review(id_buku):
 
     db.session.delete(review)
     
-    # Update rating buku
     reviews = Review.query.filter_by(id_buku=id_buku).all()
     avg_rating = sum([r.rating for r in reviews]) / len(reviews) if reviews else 0
     buku = Buku.query.get(id_buku)
@@ -410,7 +400,6 @@ def add_book():
 def add_books():
     data = request.get_json()
     
-    # Check if data is a list (bulk insert) or single dictionary
     if isinstance(data, list):
         books = []
         for book_data in data:
@@ -430,7 +419,6 @@ def add_books():
         db.session.commit()
         return jsonify({"message": f"{len(books)} buku berhasil ditambahkan!"}), 201
     else:
-        # Handle single book addition
         buku = Buku(
             judul=data['judul'],
             foto=data.get('foto', ''),
@@ -454,7 +442,6 @@ def update_book(id_buku):
     book.judul = data.get('judul', book.judul)
     foto_baru = data.get('foto')
     if not foto_baru:
-        # Ambil data buku dari database untuk mendapatkan foto lama
         buku_lama = Buku.query.get(id_buku)
         book.foto = buku_lama.foto
     else:
@@ -475,7 +462,6 @@ def delete_book(id_buku):
     user_reviews = Review.query.filter_by(id_buku=id_buku).all()
     buku_ids = list(set([review.id_buku for review in user_reviews]))
 
-    # Hapus semua review milik user ini
     Review.query.filter_by(id_buku=id_buku).delete()
 
     db.session.delete(book)

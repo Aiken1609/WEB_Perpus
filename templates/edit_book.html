@@ -65,7 +65,7 @@
                 <label for="foto" class="form-label">Foto Buku:</label>
                 <!-- Card untuk menampilkan visualisasi foto -->
                 <div id="fotoPreviewCard" class="card mb-2 rounded shadow" style="max-width: 200px;">
-                    <img id="fotoPreview" src="" class="card-img-top rounded" alt="Foto Buku"  style="max-width:100%; height: fit-content; object-fit: cover;">
+                    <iframe id="fotoPreview" src="" class="card-img-top rounded" alt="Foto Buku"  style="max-width:100%; height: fit-content; object-fit: cover;" allow="autoplay"></iframe>
                 </div>
                 <input type="text" class="form-control" id="foto" name="foto" accept="image/*">
             </div>
@@ -148,7 +148,7 @@
                         // Cek apakah ada data.foto
                         if (data.foto) {
                             // Asumsikan foto disimpan di /static/uploads/
-                            tampilkanFoto(`/uploads/${data.foto}`);
+                            tampilkanFoto(`${data.foto}`);
                         } else {
                             tampilkanFoto(null);
                         }
@@ -157,20 +157,6 @@
             } else {
                 tampilkanFoto(null);
             }
-
-            // Preview foto baru saat input berubah
-            document.getElementById('foto').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (ev) {
-                        tampilkanFoto(ev.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    tampilkanFoto(null);
-                }
-            });
             
             // Fungsi untuk menampilkan gambar dari data.foto atau card kosong
             function tampilkanFoto(fotoUrl) {
@@ -183,17 +169,6 @@
                     img.alt = "Tidak ada foto";
                 }
             }
-
-            // Tambahkan event listener untuk ambil nama file saat dipilih
-            const fotoInput = document.getElementById('foto');
-            let namaFoto = "";
-    
-            fotoInput.addEventListener('change', function () {
-                if (this.files && this.files.length > 0) {
-                    namaFoto = this.files.item(0).name;
-                    console.log("Nama file yang dipilih:", namaFoto);
-                }
-            });
             
             // Saat form disubmit, kirim PUT request
             const form = document.getElementById('editBookForm');

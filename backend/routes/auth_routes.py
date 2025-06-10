@@ -1,11 +1,9 @@
 from flask import Blueprint, g, request, jsonify, make_response, redirect, url_for, render_template
 from werkzeug.security import check_password_hash, generate_password_hash
-import jwt, datetime, os
+import jwt, datetime
 from flask import current_app as app
-from werkzeug.utils import secure_filename
 from ..middleware.auth import token_required, get_current_user_info
 from backend.models import db, Buku, User, Review
-
 
 auth_routes = Blueprint('auth_routes', __name__)
 
@@ -14,9 +12,7 @@ def api_login():
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
         return jsonify({'message': 'Username dan password wajib diisi!'}), 400
-    # print("Data login:", data)  # debug print
     user = User.query.filter_by(username=data.get('username')).first()
-    # print("User ditemukan:", user)  # debug print
     if not user:
         return jsonify({'message': 'Akun belum terdaftar!'}), 404
 
@@ -60,20 +56,18 @@ def daftar():
 
         # Cek apakah username sudah digunakan
         if User.query.filter_by(username=username).first():
-            # Beri alert menggunakan JavaScript di template
             return render_template('daftar.html', error="Username sudah digunakan!")
 
         hashed_password = generate_password_hash(password)
         foto = request.form.get('foto')
-        filename = secure_filename(foto.filename) if foto and foto.filename else 'default_profile.jpg'
-        if foto and foto.filename:
-            foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # foto sekarang berupa URL string, jika kosong pakai default
+        foto_url = foto if foto else 'default_profile.jpg'
 
         new_user = User(
             username=username,
             password=hashed_password,
             role='user',
-            foto=filename
+            foto=foto_url
         )
 
         db.session.add(new_user)
@@ -124,4 +118,3 @@ def delete_user():
     resp = make_response(jsonify({'message': 'Akun dan review berhasil dihapus'}))
     resp.delete_cookie('token')
     return resp
-

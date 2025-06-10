@@ -158,7 +158,7 @@
                     reviewRow.innerHTML = `
                         <td style="cursor: pointer" class="align-middle text-center">${review.id_review}</td>
                         <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer" class="align-middle text-center">
-                            ${buku && buku.foto ? `<img src="/uploads/${buku.foto}" style="width: 120px; height: 150px; object-fit: cover;" alt="Buku">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
+                            ${buku && buku.foto ? `<img src="${buku.foto}" style="width: 120px; height: 150px; object-fit: cover;" alt="Buku">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
                             <div style="margin-top:8px; font-size:14px; font-weight:500;">
                                 ${buku && buku.judul ? buku.judul : "Tidak ditemukan"}
                             </div>
@@ -166,7 +166,7 @@
                         <td class="align-middle text-center">
                             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                                 <div class="mb-1" style="width:70px;height:70px;background:#e0e0e0;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-                                    ${user && user.foto ? `<img src="/uploads/${user.foto}" alt="user" style="width:100%;height:100%;object-fit:cover;">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
+                                    ${user && user.foto ? `<img src="${user.foto}" alt="user" style="width:100%;height:100%;object-fit:cover;">` : `<span class="text-muted" style="font-size:12px;">No Image</span>`}
                                 </div>
                                 <div><span>${user && user.username ? user.username : "Tidak ditemukan"}</span></div>
                             </div>

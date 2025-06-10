@@ -105,16 +105,6 @@
     {%include 'footer.html' %}
 
     <script>
-        const fotoInput = document.getElementById('foto');
-        let namaFoto = "";
-
-        fotoInput.addEventListener('change', function () {
-            if (this.files && this.files.length > 0) {
-                namaFoto = this.files.item(0).name;
-                console.log("Nama file yang dipilih:", namaFoto);
-            }
-        });
-
         document.getElementById('addBookForm').addEventListener('submit', function (event) {
             event.preventDefault();            
 

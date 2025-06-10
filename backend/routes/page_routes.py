@@ -37,10 +37,6 @@ def dbUser():
 def dbReview():
     return render_template('dbreview.html')
 
-@page_routes.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
-
 @page_routes.route('/tambah')
 @token_required
 @admin_required
