@@ -154,7 +154,11 @@
                       <p class="card-text mb-1"><small class="text-muted">Genre:</small> ${buku.genre}</p>
                       <p class="card-text mb-2">
                         <small class="text-muted">Rating:</small>
-                        ⭐ <span class="fw-bold">${buku.rating}</span>
+                        ${
+                          !buku.rating || buku.rating === 0
+                          ? '⭐ <span class="fw-bold"> N/A </span>'
+                          : `⭐ <span class="fw-bold">${buku.rating}</span>`
+                        }
                       </p>
                       <a href="/detail/${buku.id_buku}" class="btn btn-outline-primary w-100">Detail</a>
                     </div>
