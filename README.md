@@ -1,4 +1,2 @@
-# Tugas4_WEB
-Anggota kelompok: 
-- Wahyu Widiasmoro \ 124220126
+# TugasAkhir individu_WEB
 - Aiken Ahmaf Hakeem \ 124220128
