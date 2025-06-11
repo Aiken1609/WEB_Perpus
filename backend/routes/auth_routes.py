@@ -64,7 +64,7 @@ def api_daftar():
     hashed_password = generate_password_hash(password)
     foto = data.get('foto')
     # foto sekarang berupa URL string, jika kosong pakai default
-    foto_url = foto if foto else 'default_profile.jpg'
+    foto_url = foto if foto else '/static/default_profile.jpg'
 
     new_user = User(
         username=username,
