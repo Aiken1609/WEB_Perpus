@@ -19,13 +19,13 @@
         "
       >
         <div class="d-flex align-items-center gap-3">
-          <iframe 
-            id="user-photo" 
-            src="/static/default_profile.jpg" 
-            allow="autoplay" 
+          <img
+            id="user-photo"
+            src="/static/default_profile.jpg"
             alt="Foto Profil"
             class="rounded-circle"
-            style="width: 40px; height: 40px; object-fit: cover"></iframe> 
+            style="width: 40px; height: 40px; object-fit: cover"
+          />
           <span id="user-info" class="fs-6 text-white">Sign in</span>
         </div>
       </a>
@@ -120,7 +120,7 @@
         console.error("Gagal mengambil data user:", error);
         document.getElementById("user-info").textContent = "Sign in";
         document.getElementById("user-photo").src =
-          "/uploads/default_profile.jpg";
+          "/static/default_profile.jpg";
       });
 
     fetch("/check_token", {
