@@ -49,8 +49,7 @@
       })
       .then((userini) => {
         document.getElementById("user-info").textContent = userini.username;
-        document.getElementById("user-photo").src =
-          "/static/" + (userini.foto || "default_profile.jpg");
+        document.getElementById("user-photo").src = (userini.foto || "/static/default_profile.jpg");
 
         const nav = document.getElementById("dynamic-nav");
         let html = `

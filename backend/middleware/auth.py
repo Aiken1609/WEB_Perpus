@@ -4,6 +4,7 @@ from flask import request, jsonify, redirect, url_for, g
 from flask import current_app as app
 import jwt
 from backend.models import User
+from flask import render_template
 
 def token_required(f):
     @wraps(f)
@@ -36,6 +37,33 @@ def token_required(f):
                 return redirect(url_for('page_routes.login'))
 
         return f(*args, **kwargs)
+    return decorated
+
+def redirect_by_role(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.cookies.get('token')
+        if not token:
+            auth_header = request.headers.get('Authorization')
+            if auth_header and auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+
+        if not token:
+            return render_template('login.html')
+
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            g.current_user = data
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            return render_template('login.html')
+
+        role = g.current_user.get('role')
+        if role == 'user':
+            return redirect(url_for('page_routes.buku'))
+        elif role == 'admin':
+            return render_template('dashboard.html')
+        else:
+            return render_template('login.html')
     return decorated
 
 def get_current_user_info():

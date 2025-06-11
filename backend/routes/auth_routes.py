@@ -48,32 +48,34 @@ def check_token():
             token = auth_header.split(' ')[1]
     return jsonify({'token': token})
     
-@auth_routes.route('/daftar', methods=['GET', 'POST'])
-def daftar():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+@auth_routes.route('/api/daftar', methods=['POST'])
+def api_daftar():
+    data = request.get_json()
+    if not data or not data.get('username') or not data.get('password'):
+        return jsonify({'message': 'Username dan password wajib diisi!'}), 400
 
-        # Cek apakah username sudah digunakan
-        if User.query.filter_by(username=username).first():
-            return render_template('daftar.html', error="Username sudah digunakan!")
+    username = data['username']
+    password = data['password']
 
-        hashed_password = generate_password_hash(password)
-        foto = request.form.get('foto')
-        # foto sekarang berupa URL string, jika kosong pakai default
-        foto_url = foto if foto else 'default_profile.jpg'
+    # Cek apakah username sudah digunakan
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username sudah digunakan!'}), 409
 
-        new_user = User(
-            username=username,
-            password=hashed_password,
-            role='user',
-            foto=foto_url
-        )
+    hashed_password = generate_password_hash(password)
+    foto = data.get('foto')
+    # foto sekarang berupa URL string, jika kosong pakai default
+    foto_url = foto if foto else 'default_profile.jpg'
 
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('page_routes.login'))
-    return render_template('daftar.html')
+    new_user = User(
+        username=username,
+        password=hashed_password,
+        role='user',
+        foto=foto_url
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'Registrasi berhasil!'}), 201
 
 @auth_routes.route('/thisuser', methods=['GET'])
 @token_required

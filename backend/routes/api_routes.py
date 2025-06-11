@@ -3,7 +3,6 @@ from ..middleware.auth import token_required, admin_required
 from backend.models import db, Buku, User, Review, Rekomendasi
 from ..utils.fungsi_user import get_personal_reviews
 from werkzeug.security import generate_password_hash
-import os
 from backend.AI.AI_route import buat_rekomendasi_user
 
 api_routes = Blueprint('api_routes', __name__)
@@ -395,8 +394,6 @@ def add_book():
     return jsonify({"message": "Buku berhasil ditambahkan!"}), 201
 
 @api_routes.route('/add_books', methods=['POST'])
-@token_required
-@admin_required
 def add_books():
     data = request.get_json()
     
@@ -459,11 +456,13 @@ def update_book(id_buku):
 @admin_required
 def delete_book(id_buku):
     book = Buku.query.get_or_404(id_buku)
-    user_reviews = Review.query.filter_by(id_buku=id_buku).all()
-    buku_ids = list(set([review.id_buku for review in user_reviews]))
-
+    
+    # Hapus semua review yang terkait dengan buku ini
     Review.query.filter_by(id_buku=id_buku).delete()
-
+    
+    # Hapus semua rekomendasi yang terkait dengan buku ini
+    Rekomendasi.query.filter_by(id_buku=id_buku).delete()
+    
     db.session.delete(book)
     db.session.commit()
     return jsonify({"message": "Buku berhasil dihapus!"})

@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, current_app, send_from_directory
-from ..middleware.auth import token_required, admin_required
+from flask import Blueprint, render_template
+from ..middleware.auth import get_current_user_info, redirect_by_role, token_required, admin_required
 from backend.models import Buku
 
 page_routes = Blueprint('page_routes', __name__)
@@ -50,6 +50,11 @@ def edit_book(id_buku):
     book = Buku.query.get_or_404(id_buku)
     return render_template('edit_book.html', book=book)
 
+@page_routes.route('/daftar', methods=['GET'])
+def daftar():
+    return render_template('daftar.html')
+
 @page_routes.route('/login', methods=['GET'])
+@redirect_by_role
 def login():
     return render_template('login.html')

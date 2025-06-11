@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class Buku(db.Model):
     id_buku = db.Column(db.Integer, primary_key=True)
     judul = db.Column(db.String(150), nullable=False)
-    foto = db.Column(db.String(300))
+    foto = db.Column(db.Text)
     penerbit = db.Column(db.String(100))
     bahasa = db.Column(db.String(50))
     kategori = db.Column(db.String(100))
@@ -21,9 +21,9 @@ class Buku(db.Model):
 class User(db.Model):
     id_user = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.Text, nullable=False)
     role = db.Column(Enum("user", "admin", name="user_roles"), nullable=False)
-    foto = db.Column(db.String(300), nullable=True)
+    foto = db.Column(db.Text, nullable=True)
 
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
     rekomendasi = db.relationship('Rekomendasi', back_populates='user', cascade='all, delete-orphan')

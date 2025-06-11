@@ -44,8 +44,7 @@
         }
 
         input[type="text"],
-        input[type="password"],
-        input[type="file"] {
+        input[type="password"] {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ccc;
@@ -82,6 +81,12 @@
             margin-top: 1rem;
         }
 
+        .success {
+            color: green;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
         .login {
             text-align: center;
             margin-top: 1.2rem;
@@ -105,26 +110,68 @@
     </div>
     <div class="box" style="margin-right: auto;">
         <h2>Daftar Akun</h2>
-        <form method="POST" enctype="multipart/form-data">
+        <form id="daftarForm" autocomplete="off">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
 
-            <label for="foto">Foto Profil (Opsional)</label>
-            <input type="file" id="foto" name="foto" accept="image/*">
+            <label for="foto">Foto Profil (Opsional)<br><small class="text-muted">contoh link:https://i.ibb.co/67zTc8qF/contoh.jpg</small></label>
+            <input type="text" id="foto" name="foto" placeholder="URL gambar opsional">
 
             <button type="submit">Daftar</button>
         </form>
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+        <div id="message"></div>
 
         <div class="login">
             Sudah punya akun? <a href="{{ url_for('page_routes.login') }}">Login</a>
         </div>
     </div>
+    <script>
+        document.getElementById('daftarForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const foto = document.getElementById('foto').value.trim();
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+
+            const payload = {
+                username: username,
+                password: password,
+                foto: foto
+            };
+
+            try {
+                const response = await fetch('/api/daftar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = data.message || 'Registrasi berhasil!';
+                    messageDiv.className = 'success';
+                    // Optional: redirect to login after a delay
+                    setTimeout(() => {
+                        window.location.href = "{{ url_for('page_routes.login') }}";
+                    }, 1500);
+                } else {
+                    messageDiv.textContent = data.message || 'Terjadi kesalahan.';
+                    messageDiv.className = 'error';
+                }
+            } catch (err) {
+                messageDiv.textContent = 'Gagal terhubung ke server.';
+                messageDiv.className = 'error';
+            }
+        });
+    </script>
 </body>
 </html>
