@@ -394,6 +394,8 @@ def add_book():
     return jsonify({"message": "Buku berhasil ditambahkan!"}), 201
 
 @api_routes.route('/add_books', methods=['POST'])
+@token_required
+@admin_required
 def add_books():
     data = request.get_json()
     
