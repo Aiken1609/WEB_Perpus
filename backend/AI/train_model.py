@@ -21,7 +21,6 @@ for item in data["reviewed_books"]:
         "id_buku": buku["id_buku"],           # ID hanya untuk referensi
         "kategori": buku["kategori"],
         "genre": buku["genre"],
-        "rating_buku": buku["rating"],
         "rating_user": item["review"]["rating"]
     })
 df = pd.DataFrame(rows)

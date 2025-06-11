@@ -107,7 +107,7 @@
         "buku": {
           "bahasa": "Jepang",
           "foto": "51gTbdvr9tL._SY445_SX342_.jpg",
-          "genre": "Horor",
+          "genre": "Horror",
           "id_buku": 7,
           "judul": "Tokyo Ghoul Vol.1",
           "kategori": "Komik",
@@ -158,7 +158,7 @@
         "buku": {
           "bahasa": "Indonesia",
           "foto": "c2ad9383bf17d8e342e36ee989beb771.jpg",
-          "genre": "Horor",
+          "genre": "Horror",
           "id_buku": 10,
           "judul": "Novel Matahari Terbenam",
           "kategori": "Novel",
@@ -177,7 +177,7 @@
           "judul": "A Brief History of Time",
           "bahasa": "Inggris",
           "kategori": "Ensiklopedia",
-          "genre": "Sains",
+          "genre": "Sci-fi",
           "penerbit": "Bantam Books",
           "rating": 4.4,
           "foto": "a_brief_history_of_time.jpg"
@@ -194,7 +194,7 @@
           "judul": "Kambing Jantan",
           "bahasa": "Indonesia",
           "kategori": "Novel",
-          "genre": "Komedi",
+          "genre": "Horror",
           "penerbit": "Bukune",
           "rating": 4.0,
           "foto": "kambing_jantan.jpg"
@@ -211,7 +211,7 @@
           "judul": "Sherlock Holmes: A Study in Scarlet",
           "bahasa": "Inggris",
           "kategori": "Novel",
-          "genre": "Misteri",
+          "genre": "Sci-fi",
           "penerbit": "Ward Lock & Co",
           "rating": 4.7,
           "foto": "sherlock_study_in_scarlet.jpg"
@@ -245,7 +245,7 @@
           "judul": "Chainsaw Man Vol.1",
           "bahasa": "Jepang",
           "kategori": "Komik",
-          "genre": "Horor",
+          "genre": "Horror",
           "penerbit": "Shueisha",
           "rating": 4.6,
           "foto": "chainsawman_vol1.jpg"
@@ -279,7 +279,7 @@
           "judul": "Raditya Dika: Manusia Setengah Salmon",
           "bahasa": "Indonesia",
           "kategori": "Novel",
-          "genre": "Komedi",
+          "genre": "Horror",
           "penerbit": "Bukune",
           "rating": 3.9,
           "foto": "setengah_salmon.jpg"
@@ -313,7 +313,7 @@
           "judul": "Think and Grow Rich",
           "bahasa": "Inggris",
           "kategori": "Ensiklopedia",
-          "genre": "Motivasi",
+          "genre": "Pengetahuan Umum",
           "penerbit": "The Ralston Society",
           "rating": 4.3,
           "foto": "think_and_grow_rich.jpg"
@@ -330,7 +330,7 @@
           "judul": "Laskar Pelangi",
           "bahasa": "Indonesia",
           "kategori": "Novel",
-          "genre": "Drama",
+          "genre": "Petualangan",
           "penerbit": "Bentang Pustaka",
           "rating": 4.6,
           "foto": "laskar_pelangi.jpg"

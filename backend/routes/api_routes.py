@@ -381,7 +381,7 @@ def add_book():
     data = request.get_json()
     buku = Buku(
         judul=data['judul'],
-        foto=data.get('foto', ''),
+        foto=data.get('foto', '/static/default_buku.png'),
         penerbit=data.get('penerbit', ''),
         bahasa=data.get('bahasa', ''),
         kategori=data.get('kategori', ''),
@@ -404,7 +404,7 @@ def add_books():
         for book_data in data:
             buku = Buku(
                 judul=book_data['judul'],
-                foto=book_data.get('foto', ''),
+                foto=book_data.get('foto', '/static/default_buku.png'),
                 penerbit=book_data.get('penerbit', ''),
                 bahasa=book_data.get('bahasa', ''),
                 kategori=book_data.get('kategori', ''),
