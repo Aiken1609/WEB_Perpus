@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, g, current_app
+from flask import Blueprint, render_template, request, jsonify, g
 from ..middleware.auth import token_required, admin_required
 from backend.models import db, Buku, User, Review, Rekomendasi
 from ..utils.fungsi_user import get_personal_reviews

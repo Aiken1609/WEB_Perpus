@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from ..middleware.auth import get_current_user_info, redirect_by_role, token_required, admin_required
+from ..middleware.auth import redirect_by_role, token_required, admin_required
 from backend.models import Buku
 
 page_routes = Blueprint('page_routes', __name__)

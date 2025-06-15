@@ -27,8 +27,8 @@ def predict_top_books(user_reviews: list, top_n: int = 9) -> list:
             preferensi[col] = pref_df[col].mode()[0]
 
     # 2. Ambil semua buku dari database
-    all_books = Buku.query.all()
-    reviewed_ids = {r["review"]["buku"]["id_buku"] for r in user_reviews}
+        all_books = Buku.query.all()
+        reviewed_ids = {r["review"]["buku"]["id_buku"] for r in user_reviews}
 
     # 3. Filter buku yang belum direview & cocok preferensi
     candidates = []
